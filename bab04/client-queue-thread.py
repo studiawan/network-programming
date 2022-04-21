@@ -10,7 +10,7 @@ def main(elements):
         for e in elements:
             client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             host = socket.gethostname()
-            client.connect((host, 5000))
+            client.connect((host, 5001))
             client.send(bytes(e, encoding='utf-8'))
             client.shutdown(socket.SHUT_RDWR)
             client.close()

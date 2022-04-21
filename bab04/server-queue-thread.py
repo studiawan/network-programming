@@ -54,7 +54,7 @@ def process(value):
 def main():
     s = socket.socket()             # Create a socket object
     host = socket.gethostname()     # Get local machine name
-    port = 5000                     # Reserve a port for your service.
+    port = 5001                     # Reserve a port for your service.
     s.bind((host, port))            # Bind to the port
     print("Listening on port {p}...".format(p=port))
 
