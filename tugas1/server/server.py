@@ -3,8 +3,8 @@ import sys
 import os
 
 def read_file(path_file):
-    text = ""
-    with open(path_file, 'r') as f:
+    #text = ""
+    with open(path_file, 'rb') as f:
         text = f.read()
     
     return text
@@ -34,14 +34,15 @@ try:
 
             if (os.path.exists(file_name)):
                 file_text = read_file(file_name)
-                print(file_text)
+                #print(file_text)
 
-                content = "file-name: {} ,\nfile-size: {} ,\n\n\n{}".format(file_name, 1024, file_text) 
+                content = "file-name: {} ,\nfile-size: {} ,\n\n\n".format(file_name, 1024).encode() 
+                content += file_text
 
-                client_socket.send(content.encode())
+                client_socket.sendall(content)
         
         # close socket client
-        client_socket.close()        
+        client_socket.close()
 
 # if user press ctrl + c, close socket client and exit    
 except KeyboardInterrupt:

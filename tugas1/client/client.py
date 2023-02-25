@@ -1,7 +1,7 @@
 import socket
 
 def write_file(file_data, file_name):
-    with open(file_name, 'w+') as f:
+    with open(file_name, 'wb+') as f:
         f.write(file_data)
 
 
@@ -14,7 +14,7 @@ client_socket.connect(server_address)
 command = input()
 client_socket.send(command.encode())
 
-file_content = client_socket.recv(1024).decode()
+file_content = client_socket.recv(1024).decode('iso-8859-1')
 print(file_content)
 
 content = file_content.split("\n")
@@ -23,6 +23,6 @@ file_name = content[0].split()[1]
 file_data = content[4]
 
 #print("hasil: " + file_name + " dan " + file_data)
-write_file(file_data, file_name)
+write_file(file_data.encode('iso-8859-1'), file_name)
 
 client_socket.close()
