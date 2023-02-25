@@ -3,9 +3,13 @@ import sys
 import os
 
 def read_file(path_file):
-    #text = ""
+    text = b""
     with open(path_file, 'rb') as f:
-        text = f.read()
+        while True:
+            data = f.read(1024)
+            if not data:
+                break
+            text += data
     
     return text
 

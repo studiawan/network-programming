@@ -14,13 +14,20 @@ client_socket.connect(server_address)
 command = input()
 client_socket.send(command.encode())
 
-file_content = client_socket.recv(1024).decode('iso-8859-1')
-print(file_content)
+#file_content = client_socket.recv(1024).decode('iso-8859-1')
+file_content = ""
+while True:
+    data = client_socket.recv(1024).decode('iso-8859-1')
+    if not data:
+        break
+    file_content += data
 
-content = file_content.split("\n")
+#print(file_content)
+
+content = file_content.split("\n\n\n")
 
 file_name = content[0].split()[1]
-file_data = content[4]
+file_data = content[1]
 
 #print("hasil: " + file_name + " dan " + file_data)
 write_file(file_data.encode('iso-8859-1'), file_name)

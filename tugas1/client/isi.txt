@@ -1,1 +1,5 @@
+
+file-size: 1024 ,
+
+
 isi dari file dikirim ke client sekarang!!
