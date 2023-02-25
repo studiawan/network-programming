@@ -1,10 +1,11 @@
 import socket
 import sys
+import os
 
 def read_file(path_file):
+    text = ""
     with open(path_file, 'r') as f:
         text = f.read()
-        print(text)
     
     return text
 
@@ -30,9 +31,12 @@ try:
         if(commands[0] == "download"):
             file_name = commands[1]
             print(file_name)
-            file_text = read_file(file_name)
 
-
+            if (os.path.exists(file_name)):
+                file_text = read_file(file_name)
+                print(file_text)
+                client_socket.send(file_text.encode())
+        
         # close socket client
         client_socket.close()        
 
