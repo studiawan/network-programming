@@ -35,7 +35,10 @@ try:
             if (os.path.exists(file_name)):
                 file_text = read_file(file_name)
                 print(file_text)
-                client_socket.send(file_text.encode())
+
+                content = "file-name: {} ,\nfile-size: {} ,\n\n\n{}".format(file_name, 1024, file_text) 
+
+                client_socket.send(content.encode())
         
         # close socket client
         client_socket.close()        

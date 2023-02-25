@@ -14,7 +14,15 @@ client_socket.connect(server_address)
 command = input()
 client_socket.send(command.encode())
 
-file_data = client_socket.recv(1024).decode()
-print(file_data)
+file_content = client_socket.recv(1024).decode()
+print(file_content)
+
+content = file_content.split("\n")
+
+file_name = content[0].split()[1]
+file_data = content[4]
+
+#print("hasil: " + file_name + " dan " + file_data)
+write_file(file_data, file_name)
 
 client_socket.close()
