@@ -28,22 +28,30 @@ try:
 
         # receive data from client and print
         data = client_socket.recv(1024).decode()
-        #print(data)
+        
+        # parsing command dari client
         commands = data.split()
+        file_path = "files/"
         file_name = ""
         
         if(commands[0] == "download"):
             file_name = commands[1]
-            #print(file_name)
+            file_path += commands[1]
 
-            if (os.path.exists(file_name)):
-                file_text = read_file(file_name)
-                #print(file_text)
+            # cek apakah file yang diminta ada
+            if (os.path.exists(file_path)):
+                file_text = read_file(file_path)
 
-                content = "file-name: {} ,\nfile-size: {} ,\n\n\n".format(file_name, os.path.getsize(file_name)).encode() 
+                # membuat header lalu menambahkan isi file di bawahnya
+                content = "file-name: {} ,\nfile-size: {} ,\n \n\n".format(file_name, os.path.getsize(file_path)).encode() 
                 content += file_text
 
+                # kirim ke client
                 client_socket.sendall(content)
+                print("file terkirim")
+
+            else:
+                print("file tidak ada")
         
         # close socket client
         client_socket.close()
