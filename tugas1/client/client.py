@@ -29,7 +29,7 @@ content = file_content.split("\n\n\n")
 file_name = content[0].split()[1]
 file_data = content[1]
 
-#print("hasil: " + file_name + " dan " + file_data)
+print("Header : \n{}".format(content[0]))
 write_file(file_data.encode('iso-8859-1'), file_name)
 
 client_socket.close()

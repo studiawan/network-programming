@@ -28,19 +28,19 @@ try:
 
         # receive data from client and print
         data = client_socket.recv(1024).decode()
-        print(data)
+        #print(data)
         commands = data.split()
         file_name = ""
         
         if(commands[0] == "download"):
             file_name = commands[1]
-            print(file_name)
+            #print(file_name)
 
             if (os.path.exists(file_name)):
                 file_text = read_file(file_name)
                 #print(file_text)
 
-                content = "file-name: {} ,\nfile-size: {} ,\n\n\n".format(file_name, 1024).encode() 
+                content = "file-name: {} ,\nfile-size: {} ,\n\n\n".format(file_name, os.path.getsize(file_name)).encode() 
                 content += file_text
 
                 client_socket.sendall(content)
