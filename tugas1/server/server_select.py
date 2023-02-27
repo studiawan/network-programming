@@ -56,9 +56,9 @@ try:
                             content += file_text
 
                             sock.sendall(content)
-                else:                    
-                    sock.close()
-                    input_socket.remove(sock)
+                # else:                    
+                sock.close()
+                input_socket.remove(sock)
 
 # if user press ctrl + c, close socket client and exit    
 except KeyboardInterrupt:
