@@ -1,8 +1,12 @@
 import socket
 import select
 import sys
+import configparser
 
-server_address = ('localhost', 80)
+config = configparser.ConfigParser()
+config.read('httpserver.conf')
+
+server_address = (config.get('progjar_6', 'HOST'), config.getint('progjar_6', 'PORT'))
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 server_socket.bind(server_address)
@@ -41,8 +45,26 @@ try:
 
                     sock.sendall(response_header.encode('utf-8') + response_data.encode('utf-8'))
 
+                elif request_file == '/729.txt':
+                    f = open('dataset/729.txt', 'rb')
+                    response_data = f.read()
+                    f.close()
+                    
+                    content_length = len(response_data)
+                    response_header = 'HTTP/1.1 200 OK\r\nContent-Type: multipart/form-data; charset=UTF-8\r\nContent-Length:' \
+                                      + str(content_length) + '\r\n\r\n'
+
+                    sock.sendall(response_header.encode('utf-8') + response_data)
+
                 else:
-                    sock.sendall(b'HTTP/1.1 404 Not found\r\n\r\n')
+                    f = open('404.html', 'r')
+                    response_data = f.read()
+                    f.close()
+
+                    content_length = len(response_data)
+                    response_header = 'HTTP/1.1 404 Not found\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length:' \
+                                      + str(content_length) + '\r\n\r\n'
+                    sock.sendall(response_header.encode('utf-8') + response_data.encode('utf-8'))
 
 except KeyboardInterrupt:        
     server_socket.close()
