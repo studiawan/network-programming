@@ -12,7 +12,7 @@ client_socket.connect((target_host, target_port))
 context = ssl.create_default_context()
 client_socket = context.wrap_socket(client_socket, server_hostname = target_host)
 
-client_socket.send(b'GET / HTTP/1.0\r\nHost: www.its.ac.id\r\n\r\n')
+client_socket.send(b'GET / HTTP/1.1\r\nHost: www.its.ac.id\r\n\r\n')
 
 response = ''
 while True:
@@ -22,8 +22,8 @@ while True:
     response += received.decode('utf-8')
 
 print("1. Status Code and Description:", response.splitlines()[0].partition(" ")[2])
-print("2. Content-Encoding:", response.splitlines()[9].partition(" ")[2])
+print("2. Transfer-Encoding:", response.splitlines()[4].partition(" ")[2], "Vary:", response.splitlines()[10].partition(" ")[2])
 print("3. HTTP Version:", response.splitlines()[0].partition(" ")[0])
 # print(response)
-# print(response.splitlines()[0:15])
+print(response.splitlines()[0:15])
 client_socket.close()

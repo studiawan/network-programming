@@ -13,7 +13,7 @@ client_socket.connect((target_host, target_port))
 context = ssl.create_default_context()
 client_socket = context.wrap_socket(client_socket, server_hostname = target_host)
 
-client_socket.send(b'GET / HTTP/1.0\r\nHost: classroom.its.ac.id\r\n\r\n')
+client_socket.send(b'GET / HTTP/1.1\r\nHost: classroom.its.ac.id\r\n\r\n')
 
 response = ''
 while True:
