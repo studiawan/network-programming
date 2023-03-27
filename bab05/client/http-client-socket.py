@@ -29,19 +29,26 @@ if '/dataset/' in command:
     file_data = content[1]
     write_file(file_data.encode('iso-8859-1'), file_name)
 else:
-    partisi = response.partition("<body>")[2].partition("</body>")[0]
-    soup = BeautifulSoup(partisi, 'html.parser')
+    if '/dataset' in command:
+        partisi = response.partition("<ul>")[2].partition("</ul>")[0]
+        soup = BeautifulSoup(partisi, 'html.parser')
 
-    result = []
-    menu_li = soup.find_all('li')
-    for li in menu_li:
-        a = li.find('a')
-        if a:
-            result.append(a.text.strip())
-        div = li.find('div')
-        a_content = div.find_all('a')
-        for content in a_content:
-            result.append('' + content.text.strip())
-    print(partisi)
+        menu_li = soup.get_text(" ").split(" ")
+        for li in menu_li:
+            print(li)
+    else:
+        print(response)
+
+    # result = []
+    # for li in menu_li:
+    #     a = li.find('a')
+    #     if a:
+    #         result.append(a.text.strip())
+    #     # div = li.find('div')
+    #     # a_content = div.find_all('a')
+    #     # a_content = div.find_all('a')
+    #     for content in a:
+    #         result.append('' + content.text.strip())
+    
     
 client_socket.close()
