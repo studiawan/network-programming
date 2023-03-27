@@ -89,7 +89,8 @@ try:
                                         + str(content_length) + '\r\n\r\n'
                         sock.sendall(response_header.encode('utf-8') + response_data.encode('utf-8'))
                     
-                    
+                sock.close()
+                input_socket.remove(sock)
 
 except KeyboardInterrupt:        
     server_socket.close()
