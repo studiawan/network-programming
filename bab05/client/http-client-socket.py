@@ -1,4 +1,5 @@
 import socket
+from bs4 import BeautifulSoup
 
 def write_file(file_data, file_name):
     with open(file_name, 'wb+') as f:
@@ -28,6 +29,19 @@ if '/dataset/' in command:
     file_data = content[1]
     write_file(file_data.encode('iso-8859-1'), file_name)
 else:
-    print(response)
+    partisi = response.partition("<body>")[2].partition("</body>")[0]
+    soup = BeautifulSoup(partisi, 'html.parser')
+
+    result = []
+    menu_li = soup.find_all('li')
+    for li in menu_li:
+        a = li.find('a')
+        if a:
+            result.append(a.text.strip())
+        div = li.find('div')
+        a_content = div.find_all('a')
+        for content in a_content:
+            result.append('' + content.text.strip())
+    print(partisi)
     
 client_socket.close()
