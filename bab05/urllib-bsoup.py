@@ -2,10 +2,10 @@
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 
-# response = urlopen('http://www.python.org').read()
-response = urlopen('http://localhost').read()
+response = urlopen('http://www.python.org').read()
+# response = urlopen('http://localhost:8080').read()
 
-soup = BeautifulSoup(response)
+soup = BeautifulSoup(response, features="lxml")
 
 print(soup.title.string)
 print(soup.get_text())
