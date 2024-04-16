@@ -9,7 +9,8 @@ import threading
 
 class Server:
     def __init__(self):
-        self.host = 'localhost'
+        # self.host = '10.211.55.2'
+        self.host = '127.0.0.1'
         self.port = 5000
         self.backlog = 5
         self.size = 1024
@@ -60,13 +61,16 @@ class Client(threading.Thread):
     def run(self):
         running = 1
         while running:
-            data = self.client.recv(self.size)
-            print('received: ', self.address, data)
-            if data:
-                self.client.send(data)
-            else:
-                self.client.close()
-                running = 0
+            try: 
+                data = self.client.recv(self.size)
+                print('received: ', self.address, data)
+                if data:
+                    self.client.send(data)
+                else:
+                    self.client.close()
+                    running = 0
+            except ConnectionResetError:
+                print('Connection reset')
 
 
 if __name__ == "__main__":
