@@ -1,37 +1,44 @@
 import socket
 import ssl
+import gzip
+from io import BytesIO
 from bs4 import BeautifulSoup
 
-
-# define hostname and ssl context
+# Define hostname and SSL context
 hostname = 'www.python.org'
 context = ssl.create_default_context()
 
-# create socket with ssl connection
+# Create an SSL socket connection
 with socket.create_connection((hostname, 443)) as sock:
     with context.wrap_socket(sock, server_hostname=hostname) as ssock:
-        print(ssock.version())
+        # Prepare request header with HTTP/1.1 and necessary headers
+        request_header = f"GET / HTTP/1.1\r\nHost: {hostname}\r\nAccept-Encoding: gzip\r\nConnection: close\r\n\r\n"
+        ssock.send(request_header.encode())
 
-        # prepare request header
-        request_header = 'GET / HTTP/1.0\r\nHost: ' + hostname + '\r\n' +  '\r\n\r\n'
-        request_header = request_header.encode()
+        # Initialize buffer for response
+        response = bytearray()
+        try:
+            while True:
+                chunk = ssock.recv(1024)
+                if not chunk:
+                    break
+                response += chunk
+        except socket.timeout:
+            print("Connection timed out")
 
-        # make a request
-        ssock.send(request_header)
+        # Parse response into header and content
+        header, _, content = response.partition(b'\r\n\r\n')
 
-        # receive response from server
-        response = b'' 
-        while True:
-            received = ssock.recv(1024)
-            if not received:
-                break
-            response += received
-        
-        # parse header and content    
-        header, content = response.split(bytes('\r\n\r\n', 'utf-8'), 1)
+        # Decode and print headers
         header = header.decode()
-        soup = BeautifulSoup(content, features="lxml")
-
-        # print header and content text
         print(header)
+
+        # Check if the content is gzip compressed
+        if 'gzip' in header:
+            buf = BytesIO(content)
+            f = gzip.GzipFile(fileobj=buf)
+            content = f.read()
+
+        # Parse HTML content with BeautifulSoup
+        soup = BeautifulSoup(content, 'lxml')
         print(soup.get_text())
