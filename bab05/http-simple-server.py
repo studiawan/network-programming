@@ -38,7 +38,7 @@ try:
                         f.close()
                         
                         content_length = len(response_data)
-                        response_header = 'HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length:' \
+                        response_header = 'HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: ' \
                                         + str(content_length) + '\r\n\r\n'
 
                         sock.sendall(response_header.encode('utf-8') + response_data.encode('utf-8'))
