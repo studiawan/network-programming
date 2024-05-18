@@ -1,62 +1,56 @@
 import socket
 
-def create_socket(host, port=21):
-    """ Create a socket and connect to the given host and port. """
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((host, port))
-    return s
+class FTP:
+    def __init__(self, host='', user='', passwd='', timeout=socket._GLOBAL_DEFAULT_TIMEOUT):
+        self.host = host
+        self.user = user
+        self.passwd = passwd
+        self.timeout = timeout
+        self.sock = None
+        self.file = None
 
-def recv_lines(sock):
-    """ Receive lines from the server and decode them. """
-    data = []
-    while True:
-        line = sock.recv(1024).decode('utf-8')
-        if not line:
-            break
-        data.append(line)
-        if line.endswith('\r\n'):
-            break
-    return ''.join(data)
+    def connect(self):
+        self.sock = socket.create_connection((self.host, 21), self.timeout)
+        self.file = self.sock.makefile('r')
+        self.getresp()
 
-def send_cmd(sock, cmd):
-    """ Send a command to the FTP server. """
-    sock.sendall(f"{cmd}\r\n".encode('utf-8'))
-    return recv_lines(sock)
+    def getresp(self):
+        resp = self.file.readline()
+        return resp
 
-def main():
-    host = 'localhost'  # Replace with your FTP server's IP address or hostname
-    port = 21
+    def sendcmd(self, cmd):
+        self.sock.sendall(cmd.encode('ascii') + b'\r\n')
+        return self.getresp()
 
-    # Connect to FTP server
-    ftp_socket = create_socket(host, port)
-    print(recv_lines(ftp_socket))  # Print welcome message
+    def login(self):
+        self.sendcmd(f'USER {self.user}')
+        self.sendcmd(f'PASS {self.passwd}')
 
-    # Send username and password (use 'anonymous' and your email as password for anonymous access)
-    print(send_cmd(ftp_socket, 'USER hudan'))  # Send USER command
-    print(send_cmd(ftp_socket, 'PASS 123'))  # Send PASS command
+    def retrlines(self, cmd='LIST'):
+        self.sendcmd('PASV')
+        resp = self.getresp()
+        start = resp.find('(') + 1
+        end = resp.find(')', start)
+        numbers = list(map(int, resp[start:end].split(',')))
+        ip = '.'.join(map(str, numbers[:4]))
+        port = (numbers[4] << 8) + numbers[5]
 
-    # Switch to Passive Mode
-    pasv_mode = send_cmd(ftp_socket, 'PASV')
-    print(pasv_mode)
+        data_sock = socket.create_connection((ip, port), self.timeout)
+        self.sendcmd(cmd)
+        data_file = data_sock.makefile('r')
+        for line in data_file:
+            print(line.strip())
+        data_sock.close()
+        self.getresp()
 
-    # Parse the passive mode response to get the IP and port
-    ip_port = pasv_mode.split('(')[1].split(')')[0].split(',')
-    ip_address = '.'.join(ip_port[:4])
-    port = (int(ip_port[4]) * 256) + int(ip_port[5])
+    def quit(self):
+        self.sendcmd('QUIT')
+        self.sock.close()
+        self.file.close()
 
-    # Connect to the data socket
-    data_socket = create_socket(ip_address, port)
-    
-    # List files and directories in the current directory
-    print(send_cmd(ftp_socket, 'LIST'))
-
-    # Receive directory listing from data socket
-    print(recv_lines(data_socket))
-    data_socket.close()
-
-    # Quit the session
-    print(send_cmd(ftp_socket, 'QUIT'))
-    ftp_socket.close()
-
-if __name__ == "__main__":
-    main()
+# Usage example
+ftp = FTP('127.0.0.1', 'hudan', '123')
+ftp.connect()
+ftp.login()
+ftp.retrlines()
+ftp.quit()
