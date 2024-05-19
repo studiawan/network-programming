@@ -3,6 +3,7 @@
 import socket
 import pickle
 import sys
+import json
 
 # some definitions
 SIZE = 1024
@@ -26,7 +27,9 @@ while 1:
                     break
 
                 # unpickle message and print it
-                message = pickle.loads(message)
+                # message = pickle.loads(message)
+                message = message.decode('utf-8')
+                message = json.loads(message)
                 print(client_address, message)        
             except(KeyboardInterrupt, SystemExit):
                 sys.exit(0)
