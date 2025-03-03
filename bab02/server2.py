@@ -11,7 +11,10 @@ server_socket.listen(5)
 try:
     while True:
         client_socket, client_address = server_socket.accept()
-        print(client_socket, client_address)
+        print(client_socket)
+        print(client_address)
+        print(client_socket.getsockname())
+        print(client_socket.getpeername())
 
         # receive data from client and print
         data = client_socket.recv(1024)
