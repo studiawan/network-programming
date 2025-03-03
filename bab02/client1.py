@@ -4,6 +4,8 @@ import socket
 server_address = ('localhost', 5001)
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.connect(server_address)
+print(client_socket.getpeername())
+print(client_socket.getsockname())
 
 # send string to server and close socket
 client_socket.send(b'Hi ... ')
