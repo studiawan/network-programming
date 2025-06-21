@@ -1,4 +1,5 @@
 import smtplib
+import getpass
 
 def prompt(prompt):
     return input(prompt).strip()
@@ -21,9 +22,12 @@ while True:
 
 print("Message length is", len(msg))
 
+username = prompt("Username: ")
+password = getpass.getpass("Password: ")
+
 server = smtplib.SMTP('smtp.office365.com', 587)
 server.set_debuglevel(1)
 server.starttls()
-server.login('hudan@its.ac.id', 'xxx')
+server.login(username, password)
 server.sendmail(fromaddr, toaddrs, msg)
 server.quit()
