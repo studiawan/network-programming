@@ -40,5 +40,5 @@ with socket.create_connection((hostname, 443)) as sock:
             content = f.read()
 
         # Parse HTML content with BeautifulSoup
-        soup = BeautifulSoup(content, 'lxml')
+        soup = BeautifulSoup(content.decode(), 'lxml')
         print(soup.get_text())
